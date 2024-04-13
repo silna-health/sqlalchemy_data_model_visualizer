@@ -48,7 +48,6 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
 
     # Save and view the graph
     dot.render(output_path, view=True)
-    print(f"Diagram saved to: {output_path}")
     return output_path
 
 
