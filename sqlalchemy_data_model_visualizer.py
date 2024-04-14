@@ -9,7 +9,7 @@ import os
 Base = declarative_base()
 
 
-def generate_data_model_diagram(models, output_file='my_data_model_diagram', add_labels=True):
+def generate_data_model_diagram(models, output_file='my_data_model_diagram', add_labels=True, view=True):
     # Create a temporary directory to store the diagram
     temp_dir = tempfile.mkdtemp()
     output_path = os.path.join(temp_dir, output_file)
@@ -47,7 +47,7 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
                      style="dashed")
 
     # Save and view the graph
-    dot.render(output_path, view=True)
+    dot.render(output_path, view=view)
     return output_path
 
 
