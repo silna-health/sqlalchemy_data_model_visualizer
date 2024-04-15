@@ -19,6 +19,8 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
                            node_attr={'shape': 'none', 'fontsize': '12', 'fontname': 'Roboto'},
                            edge_attr={'fontsize': '10', 'fontname': 'Roboto'})
 
+    model_table_map = {model.__table__.name: model for model in models}
+
     for model in models:
         insp = inspect(model)
         name = insp.class_.__name__
@@ -40,11 +42,24 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
         label += '</TABLE>>'
         dot.node(name, label=label, URL=f"http://{name}_details.html")
 
-        for rel in insp.relationships:
-            target_name = rel.mapper.class_.__name__
-            tooltip = f"Relation between {name} and {target_name}"
-            dot.edge(name, target_name, label=rel.key if add_labels else None, tooltip=tooltip, color="#1E88E5",
-                     style="dashed")
+        for fk in insp.mapped_table.foreign_key_constraints:
+            if len(fk.column_keys) == 1:
+                fk_col = list(fk.column_keys)[0]
+                target_table_name = fk.referred_table.name
+                if target_table_name in model_table_map:
+                    target_model = model_table_map[target_table_name]
+                    target_name = target_model.__name__
+                else:
+                    # If the target model is not in the models list, try to find it through relationships
+                    target_name = None
+                    for rel in insp.relationships:
+                        if rel.target.name == target_table_name:
+                            target_name = rel.mapper.class_.__name__
+                            break
+
+                if target_name:
+                    tooltip = f"Foreign key from {name}.{fk_col} to {target_name}"
+                    dot.edge(name, target_name, label=fk_col if add_labels else None, tooltip=tooltip, color="#1E88E5")
 
     # Save and view the graph
     dot.render(output_path, view=view)
