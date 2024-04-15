@@ -9,8 +9,11 @@ import os
 Base = declarative_base()
 
 
-def generate_data_model_diagram(models, output_file='my_data_model_diagram', add_labels=True, view=True):
+def generate_data_model_diagram(models, output_file='my_data_model_diagram', add_labels=True, view=True, models_to_exclude=None):
     # Create a temporary directory to store the diagram
+
+    if models_to_exclude is None:
+        models_to_exclude = []
     temp_dir = tempfile.mkdtemp()
     output_path = os.path.join(temp_dir, output_file)
 
@@ -52,12 +55,14 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
                 else:
                     # If the target model is not in the models list, try to find it through relationships
                     target_name = None
+                    target_model = None
                     for rel in insp.relationships:
                         if rel.target.name == target_table_name:
+                            target_model = rel.mapper.class_
                             target_name = rel.mapper.class_.__name__
                             break
-
-                if target_name:
+                # just make sure the target model is not in the excluded list
+                if target_name and target_name not in models_to_exclude:
                     tooltip = f"Foreign key from {name}.{fk_col} to {target_name}"
                     dot.edge(name, target_name, label=fk_col if add_labels else None, tooltip=tooltip, color="#1E88E5")
 
