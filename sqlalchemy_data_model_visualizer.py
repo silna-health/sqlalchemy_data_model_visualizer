@@ -17,7 +17,7 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
     temp_dir = tempfile.mkdtemp()
     output_path = os.path.join(temp_dir, output_file)
 
-    dot = graphviz.Digraph(comment='Interactive Data Models', format='png',
+    dot = graphviz.Digraph(comment='Interactive Data Models', format='svg',
                            graph_attr={'bgcolor': '#EEEEEE', 'rankdir': 'TB', 'splines': 'spline'},
                            node_attr={'shape': 'none', 'fontsize': '12', 'fontname': 'Roboto'},
                            edge_attr={'fontsize': '10', 'fontname': 'Roboto'})
