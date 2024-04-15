@@ -62,7 +62,7 @@ def generate_data_model_diagram(models, output_file='my_data_model_diagram', add
                             target_name = rel.mapper.class_.__name__
                             break
                 # just make sure the target model is not in the excluded list
-                if target_name and target_name not in models_to_exclude:
+                if target_name and target_model not in models_to_exclude:
                     tooltip = f"Foreign key from {name}.{fk_col} to {target_name}"
                     dot.edge(name, target_name, label=fk_col if add_labels else None, tooltip=tooltip, color="#1E88E5")
 
